@@ -1,10 +1,10 @@
 Config = {}
 Config.MaxDistance = 10.0 -- Max interact distance
 Config.UseKeySystem = true -- Implemented only for qb-vehiclekeys, you can implement it for other systems in cl_edit.lua
-Config.SpawnpointCheck = false -- Checks if the vehicle spawnpoint is empty before spawning it.
+Config.SpawnpointCheck = true -- Checks if the vehicle spawnpoint is empty before spawning it.
 
 -- The global setting for target however you can still combine target/TextUI by omitting Position or PedPosition in garage/impound data
-Config.Target = false
+Config.Target = true
 
 ---@alias VehicleType string
 

@@ -142,22 +142,46 @@ local function openGarageVehicles(args)
     for _, vehicle in ipairs(vehicles) do
         ---@type VehicleProperties
         local props = json.decode(vehicle.mods or vehicle.vehicle)
-
         local class = GetVehicleClassFromName(GetDisplayNameFromVehicleModel(props.model))
-        local fuelLevel = props.fuelLevel or 100.0
+        local fuelLevel = math.floor(props.fuelLevel) or 100.0
+        local engineHealth = math.floor(props.engineHealth/10) or 100.0
+        local bodyHealth = math.floor(props.bodyHealth/10) or 100.0
+        local iconColor = "green"
+        if vehicle.state == "in_impound" then
+            iconColor = "red"
+        end
 
         ---@type ContextMenuArrayItem
         local option = {
-            title = locale('vehicle_info', GetVehicleLabel(props.model), props.plate),
+            title = locale('vehicle_info', GetVehicleLabel(props.model), props.plate, locale(vehicle.state)),
             icon = getClassIcon(class),
-            progress = class ~= 13 and fuelLevel,
-            colorScheme = class ~= 13 and getFuelBarColor(fuelLevel),
+            iconColor = iconColor,
+            -- progress = class ~= 13 and fuelLevel,
+            -- colorScheme = class ~= 13 and getFuelBarColor(fuelLevel),
             metadata = {
                 ---@diagnostic disable-next-line: assign-type-mismatch
-                { label = locale('status'), value = locale(vehicle.state) },
+                -- { label = locale('status'), value = locale(vehicle.state) },
                 
                 ---@diagnostic disable-next-line: assign-type-mismatch
-                { label = locale('fuel'), value = class ~= 13 and fuelLevel .. '%' or locale('no_fueltank') }
+
+                { 
+                    label = locale('engine'), 
+                    value = class ~= 13 and engineHealth .. '%' or locale('no_info'),
+                    progress = class ~= 13 and engineHealth,
+                    colorScheme = class ~= 13 and getFuelBarColor(engineHealth),
+                },
+                { 
+                    label = locale('body'), 
+                    value = bodyHealth .. '%' or locale('no_info'),
+                    progress = bodyHealth,
+                    colorScheme = getFuelBarColor(bodyHealth),
+                },
+                { 
+                    label = locale('fuel'), 
+                    value = class ~= 13 and fuelLevel .. '%' or locale('no_fueltank'),
+                    progress = class ~= 13 and fuelLevel,
+                    colorScheme = class ~= 13 and getFuelBarColor(fuelLevel),
+                },
             },
             args = { index = index, props = props },
             onSelect = vehicle.state == 'in_garage' and SpawnVehicle or function()
@@ -306,17 +330,36 @@ local function openImpoundVehicles(args)
         local props = json.decode(vehicle.mods or vehicle.vehicle)
 
         local class = GetVehicleClassFromName(GetDisplayNameFromVehicleModel(props.model))
-        local fuelLevel = props.fuelLevel or 100.0
-
+        local fuelLevel = math.floor(props.fuelLevel) or 100.0
+        local engineHealth = math.floor(props.engineHealth/10) or 100.0
+        local bodyHealth = math.floor(props.bodyHealth/10) or 100.0
         ---@type ContextMenuArrayItem
         local option = {
-            title = locale('vehicle_info', GetVehicleLabel(props.model), props.plate),
+            title = locale('vehicle_info', GetVehicleLabel(props.model), props.plate, "Apreendido"),
             icon = getClassIcon(class),
-            progress = class ~= 13 and fuelLevel,
-            colorScheme = class ~= 13 and getFuelBarColor(fuelLevel),
+            iconColor = "Red",
+            -- progress = class ~= 13 and fuelLevel,
+            -- colorScheme = class ~= 13 and getFuelBarColor(fuelLevel),
             metadata = {
                 ---@diagnostic disable-next-line: assign-type-mismatch
-                { label = locale('fuel'), value = class ~= 13 and fuelLevel .. '%' or locale('no_fueltank') }
+                { 
+                    label = locale('engine'), 
+                    value = class ~= 13 and engineHealth .. '%' or locale('no_info'),
+                    progress = class ~= 13 and engineHealth,
+                    colorScheme = class ~= 13 and getFuelBarColor(engineHealth),
+                },
+                { 
+                    label = locale('body'), 
+                    value = bodyHealth .. '%' or locale('no_info'),
+                    progress = bodyHealth,
+                    colorScheme = getFuelBarColor(bodyHealth),
+                },
+                { 
+                    label = locale('fuel'), 
+                    value = class ~= 13 and fuelLevel .. '%' or locale('no_fueltank'),
+                    progress = class ~= 13 and fuelLevel,
+                    colorScheme = class ~= 13 and getFuelBarColor(fuelLevel),
+                },
             },
             args = { index = index, props = props },
             onSelect = retrieveVehicle

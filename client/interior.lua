@@ -52,8 +52,12 @@ end)
 
 ---@param index integer The garage index
 function EnterInterior(index)
-    local garage = Config.Garages[index]
+    print(index)
 
+    local garage = Config.Garages[index]
+    print(garage)
+
+    
     if not garage?.Interior then return end
 
     local interior = Config.GarageInteriors[garage.Interior]

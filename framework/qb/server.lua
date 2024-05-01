@@ -1,4 +1,4 @@
-if GetResourceState('qb-core') ~= 'started' then return end
+if GetResourceState('qbx_core') ~= 'started' then return end
 
 Framework = { name = 'qb-core' }
 local sharedObject = exports['qb-core']:GetCoreObject()
